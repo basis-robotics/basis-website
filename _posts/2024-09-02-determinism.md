@@ -4,6 +4,8 @@ title: Determinism in Robotics Testing
 author: Kyle Franz
 ---
 
+Here at Basis, we're building a production/testing focused robotics framework. Along those lines, determinism when testing is one of our primary goals.
+
 ## Background 
 
 Determinism in robotics is an ongoing problem, both for runtime and for testing. This post aims to show a solution for testing/simulation.
@@ -33,6 +35,27 @@ In the end, this just trains the engineering team to ignore test results, and di
 
 Basis is aiming for tests to give the same result, every time. Other types of determinism will also come later (code running the same time on replay as it did at runtime, for example).
 
+### Sources of nondeterminism
+
+Nondeterminism can come from a wide variety of sources.
+
+The current main focus of efforts creating basis (and the focus of this blog post) is nondeterminism from the transport layer and scheduling related nondeterminism.
+
+Nondeterminism at the transport layer includes nondeterminism in the network stack, the order sockets are processed in, what happens when two messages come in at the same moment, that sort of thing.
+
+Scheduling nondeterminism encompasses threading related woes, performance differences between test executions, etc.
+
+A non-exhaustive list of other sources of nondeterminism:
+ * calls to random()
+ * use of the system clock 
+ * use of networked resources
+ * data races
+ * compiler flags
+ * cosmic rays
+ * pointer comparisons
+
+(I've seen all of these in test environements before.)
+
 ### How can we fix this?
 
 A few rules:
@@ -50,11 +73,12 @@ From these rules, one can build a scheduler that looks at the requested Units to
 
 ## Demonstration
 
-Let's show how Basis can help with determinism.
+Let's show how basis can help with determinism. First we'll record some data from a live run. Then we'll run a `replay` test on that data and find issues with the testing process. Finally, we'll show `deterministic_replay` at work, fixing those issues. 
 
 ### Recording some data
 
-Here's an example of a basis unit that wants to do some work. This unit will take in a single message, block for 100ms (doing fake "work") and then exit, allowing other callbacks to run.
+Here's an example of a basis Unit that wants to do some work. This Unit will take in a single message, block for 100ms (doing fake "work") and then exit, allowing other callbacks to run.
+
 ```yaml
 threading_model:
   single
@@ -133,7 +157,7 @@ Great, but now let's pretend this was data recorded on a robot. We might want to
 
 ### Problem 1 - missing data, nondeterminism.
 
-Rerunning this a few times, we see Problem #1 - we sometimes miss the first message of the test, and get an output like:
+Rerunning this a few times, we see Problem #1 - we sometimes miss the first message of the test, and get an output:
 ```cpp
 [125002.147061284] [/simple_sub] [info] OnChatter: Hello, world! 125002.147061284
 ```
@@ -146,10 +170,9 @@ basis@aee413836118:/basis/demos/simple_pub_sub/build$ ~/mcap-linux-arm64 cat --j
 {"topic":"/chatter","sequence":0,"log_time":125001.136257244,"publish_time":125001.136257244,"data":{"sendStamp":"125001136105286", "message":"Hello, world!"}}
 ...
 ```
-Several messages are missing. Even our first replay was missing `124999` and `125000`. 
+Several messages are missing from the test. Even our most complete replay was missing `124999` and `125000`. 
 
-
-### Problem 2 - performance
+### Problem 2 - performance differences
 
 Now what if instead, our testing environment was slower (overloaded CI, different/no GPU, less cores). In this scenario, let's pretend that the work takes 2000 ms to run, and set `constexpr int work_time_ms = 2000;`.
 
@@ -169,11 +192,23 @@ Let's run that same replay test.
 [125008.147061284] [/simple_sub] [info] Doing 2000 ms worth of work
 ```
 
-Look at that - rather than the second message being processed at `125003.137948037`, it's processed at `125004.147061284`, a second later than expected (or exactly as one would expect for adding an additional second of blocking...). The delay will only continue to go up, and the queues backing the pub/sub system generally won't be configured for infinite space, resulting in dropped messages.
+Look at that - rather than the second message being processed at `125003.137948037`, it's processed at `125004.147061284`, a second later than expected (or exactly as one would expect for adding an additional second of blocking...). The delay will only continue to go up, and the queues backing the pub/sub system generally won't be configured for infinite space, resulting in dropped messages and incorrect timings.
+
+If the original runtime looked like this:
+
+![]({{site.baseurl}}/assets/diagrams/runtime_msg.svg)
+
+_(Apologies for the default LucidChart colorscheme)_
+
+With our artifical slowdown, it now looks like this: 
+
+![]({{site.baseurl}}/assets/diagrams/slow_msg.svg)
+
+Note the queueing - we can't process more messages while `OnChatter` is executing, but the replay system doesn't know this and keeps publishing messages.
 
 ## The solution
 
-Let's rerun this with basis's deterministic replayer.
+Let's rerun this with basis's _deterministic_ replayer. 
 
 ```cpp
 deterministic_replay /tmp/demo_124998.122377076.mcap /basis/demos/simple_pub_sub/launch_single_process.yaml --disable_unit demo:simple_pub
@@ -190,18 +225,21 @@ deterministic_replay /tmp/demo_124998.122377076.mcap /basis/demos/simple_pub_sub
 [125001.236257244] [/simple_sub] [info] OnChatter: Hello, world! 125001.136105286
 ```
 
-Beautiful - we even caught the first few messages.
+Beautiful - we even caught the first few messages that were dropped before. The scheduler now waits on Handlers that are expected to be complete (in terms of simulated time) but aren't yet finished (in realtime).
+
+![]({{site.baseurl}}/assets/diagrams/fast_msg.svg)
+
+We can see that we don't do any more work (such as replaying messages) while `OnChatter` is executing, as the Handler is only supposed to take 100ms of simulation time. It sucks that we're running twice as slow as realtime, but it's better than running with inaccurate messages.
 
 ## Extra (fast CI)
 
 Here's a bonus side effect: Let's turn the work time all the way down to 10ms. Because `deterministic_replay` knows when code should run, it also knows when code _isn't_ running. We can run the code as fast as our CPU will let us, ignoring the fact that the replay data publishes at 1Hz. This enables integration tests that run lightning fast.
 
-(Other data replay systems usually have some form of rate multiplier command - but this is tough to tune for different situations - get it wrong and your test is wrong).
+(Other data replay systems usually have some form of rate multiplier command - but this is tough to tune for all conditions).
 
 | `replay` | `deterministic_replay` |
 |-------|--------|---------|
-| ![sample image]({{site.baseurl}}/assets/images/slow.gif) | ![sample image]({{site.baseurl}}/assets/images/fast.gif) | 
-
+| ![slow]({{site.baseurl}}/assets/images/slow.gif) | ![fast]({{site.baseurl}}/assets/images/fast.gif) |
 
 ## Even further
 
@@ -212,7 +250,7 @@ With this power, we can do more:
  * `lldb -- deterministic_replayer ...` just works, and can pause all units, properly, without having to mess with fork modes.
  * Everything can be run in a single process for test mode, meaning a coordinator (master) process is only needed if communication with visualizers or other tooling is required. What this realistically means is that an entire integration test can be put into a few lines of a gtest cpp file (or your test framework of choice) - no external process management needed.
 
-### Some more background
+### Hasn't this been built yet?
 
 This sort of tooling has been asked for before:
  * [Unanswered answers.ros.org post](https://answers.ros.org/question/254354/deterministic-replay-and-debugging/)

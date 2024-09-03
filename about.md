@@ -1,15 +1,8 @@
 ---
 layout: page
-title: About
+title: FAQ
 permalink: /about/
 ---
-
-We're building a new robotics framework with a focus on testing and reliability.
-
-See more at [https://www.basisrobotics.tech/home](https://www.basisrobotics.tech/home)
-
-
-## FAQ
 
 **Q. Can I use basis?**
 
@@ -33,7 +26,7 @@ A. Yes - with a bit more work. If you're a basis user, we will work with you to 
 
 **Q. Can I contribute?**
 
-A. No. Once we release source...maybe. The best place for external contributors will be for things like sensor drivers and other modules that can be pulled in.
+A. Not right now. Once we release source...maybe. The best place for external contributors will be for things like sensor drivers and other modules that can be pulled in.
 
 **Q. Can I sponsor or fund Basis?**
 
