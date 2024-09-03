@@ -244,11 +244,12 @@ Here's a bonus side effect: Let's turn the work time all the way down to 10ms. B
 ## Even further
 
 With this power, we can do more:
+ * Everything can be run in a single process for test mode, meaning a coordinator (master) process is only needed if communication with visualizers or other tooling is required. What this realistically means is that an entire integration test can be put into a few lines of a gtest cpp file (or your test framework of choice) - no external process management needed.
  * Find out what happens if one of our messages arrives later than expected, or test different timing related error paths. How well have you actually tested your degraded states around timing?
  * The default behavior of `deterministic_replay` is to always rerun events that happen at the same time in the same order. What if instead we reversed it? Or randomized it with a seed? With message send time jitter randomization added on top, one could long tail test for timing related bugs. 
  * Test out "what if" situations that may be expensive to implement. Let's say your Perception Lead says he can speed up the perception stack by 15% with a quarter's worth of work and two engineers. It sounds good on paper, but will a faster perception stack actually lead to better robot performance? Before doing the quarter's worth of work, run your integration test suite with the promised timings, instead.
  * `lldb -- deterministic_replayer ...` just works, and can pause all units, properly, without having to mess with fork modes.
- * Everything can be run in a single process for test mode, meaning a coordinator (master) process is only needed if communication with visualizers or other tooling is required. What this realistically means is that an entire integration test can be put into a few lines of a gtest cpp file (or your test framework of choice) - no external process management needed.
+
 
 ### Hasn't this been built yet?
 
