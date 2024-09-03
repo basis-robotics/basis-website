@@ -96,3 +96,21 @@ pre.highlight {
     display: inline-block !important;
   }
 }
+
+
+// Overrides from default
+
+// On wide screens, break up the text boxes a bit 
+@media only screen and (min-width: 1024px) {
+
+.highlight {
+  margin: 3em;
+  margin-right: 3em;
+}
+
+.highlight .highlight {
+  margin-left: 0em;
+  margin-right: 0em;
+}
+
+}
