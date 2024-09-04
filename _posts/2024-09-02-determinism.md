@@ -4,7 +4,18 @@ title: Determinism in Robotics Testing
 author: Kyle Franz
 ---
 
-Here at Basis, we're building a production/testing focused robotics framework. Along those lines, determinism when testing is one of our primary goals.
+Here at Basis, we're building a production/testing focused robotics framework. Along those lines, determinism when testing is one of our primary goals. This article is focused on how basis can not only achieve determinism in tests, but use it to run your tests lightning fast.
+
+Here's a preview:
+{% capture cool_preview %}
+
+| `replay` | `deterministic_replay` |
+|-------|--------|---------|
+| ![slow]({{site.baseurl}}/assets/images/slow.gif) | ![fast]({{site.baseurl}}/assets/images/fast.gif) |
+
+{% endcapture %}
+
+{{ cool_preview }}
 
 ## Background 
 
@@ -172,7 +183,7 @@ basis@aee413836118:/basis/demos/simple_pub_sub/build$ ~/mcap-linux-arm64 cat --j
 ```
 Several messages are missing from the test. Even our most complete replay was missing `124999` and `125000`. 
 
-### Problem 2 - performance differences
+### Problem 2 - performance differences can mean nondeterminism
 
 Now what if instead, our testing environment was slower (overloaded CI, different/no GPU, less cores). In this scenario, let's pretend that the work takes 2000 ms to run, and set `constexpr int work_time_ms = 2000;`.
 
@@ -206,6 +217,18 @@ With our artifical slowdown, it now looks like this:
 
 Note the queueing - we can't process more messages while `OnChatter` is executing, but the replay system doesn't know this and keeps publishing messages.
 
+### Problem 3 - integration tests are slow, clunky, and don't pair well with unit testing frameworks
+
+If each message takes 100ms to process, and we replay 10 messages, how long would you expect this test to take? With a regular integration test: 10 seconds, for 1 second worth of work.
+
+Let's say our CI hardware is even faster, able to process a message in 10ms - the test still takes 10 seconds to run, for 100ms worth of work.
+
+Along with this, how would we integrate this test with `gtest`? We'd have to build some sort of framework that manages forking or shelling out to launch each part of it, with timeouts, management for grandchildren processes, etc.
+
+If we wanted to programmatically create messages (avoiding the use of serialized data on disk), or create a single message and check the output of the system after each step, how would we do it? With ROS you'd have two choices:
+1. Stand up a ROS Master, launch the nodes you care about, initialize your test as a ROS node, publish the message, and spin until you (maybe) get a response. (Don't forget to turn off paralellism for your tests!)
+2. Break apart your ROS Nodes into libraries, manually shuffling messages between the business logic for each node (good luck keeping this in sync with the launch files)
+
 ## The solution
 
 Let's rerun this with basis's _deterministic_ replayer. 
@@ -231,20 +254,21 @@ Beautiful - we even caught the first few messages that were dropped before. The 
 
 We can see that we don't do any more work (such as replaying messages) while `OnChatter` is executing, as the Handler is only supposed to take 100ms of simulation time. It sucks that we're running twice as slow as realtime, but it's better than running with inaccurate messages.
 
-## Extra (fast CI)
+Problem 1, Problem 2 - solved.
 
-Here's a bonus side effect: Let's turn the work time all the way down to 10ms. Because `deterministic_replay` knows when code should run, it also knows when code _isn't_ running. We can run the code as fast as our CPU will let us, ignoring the fact that the replay data publishes at 1Hz. This enables integration tests that run lightning fast.
+As for Problem 3... remember that preview gif from the beginning of the article?
+
+Let's turn the work time all the way down to 10ms. Because `deterministic_replay` knows when code should run, it also knows when code _isn't_ running. We can run the code as fast as our CPU will let us, ignoring the fact that the replay data publishes at 1Hz. This enables integration tests that run lightning fast.
 
 (Other data replay systems usually have some form of rate multiplier command - but this is tough to tune for all conditions).
 
-| `replay` | `deterministic_replay` |
-|-------|--------|---------|
-| ![slow]({{site.baseurl}}/assets/images/slow.gif) | ![fast]({{site.baseurl}}/assets/images/fast.gif) |
+{{ cool_preview }}
+
+Everything can be run in a single process for test mode, meaning a coordinator (master) process is only needed if communication with visualizers or other tooling is required (not required for unit testing). One could link `deterministic_replay` into a unit test, then run a launch file (or even a programatically created list of Units), push in messages, query outputted messages and inner states of nodes, modify in flight messages, etc. No extra processes needed.
 
 ## Even further
 
 With this power, we can do more:
- * Everything can be run in a single process for test mode, meaning a coordinator (master) process is only needed if communication with visualizers or other tooling is required. What this realistically means is that an entire integration test can be put into a few lines of a gtest cpp file (or your test framework of choice) - no external process management needed.
  * Find out what happens if one of our messages arrives later than expected, or test different timing related error paths. How well have you actually tested your degraded states around timing?
  * The default behavior of `deterministic_replay` is to always rerun events that happen at the same time in the same order. What if instead we reversed it? Or randomized it with a seed? With message send time jitter randomization added on top, one could long tail test for timing related bugs. 
  * Test out "what if" situations that may be expensive to implement. Let's say your Perception Lead says he can speed up the perception stack by 15% with a quarter's worth of work and two engineers. It sounds good on paper, but will a faster perception stack actually lead to better robot performance? Before doing the quarter's worth of work, run your integration test suite with the promised timings, instead.
