@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Determinism in Robotics Testing
+title: (Fixing) Determinism in Robotics Testing
 author: Kyle Franz
 ---
 
