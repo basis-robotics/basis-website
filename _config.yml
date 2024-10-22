@@ -45,6 +45,7 @@ footer-links:
   email: team@basisrobotics.tech
   facebook:
   github: basis-robotics
+  discord: https://discord.gg/8bzvASNPZ8
 
 plugins:
   - jekyll-seo-tag
