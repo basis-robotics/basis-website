@@ -6,3 +6,5 @@
   link: /about/
 - name: Contact
   link: /contact/
+- name: Docs
+  link: https://docs.basisrobotics.tech
