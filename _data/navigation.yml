@@ -1,3 +1,7 @@
+- name: Get Basis
+  link: http://github.com/basis-robotics/basis
+- name: Docs
+  link: https://docs.basisrobotics.tech
 - name: Blog
   link: /blog/
 - name: Team
