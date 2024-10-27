@@ -6,15 +6,15 @@ permalink: /about/
 
 **Q. Can I use basis?**
 
-A. Not yet, but please contact us if you're interested
+A. Yes! Try it out at http://github.com/basis-robotics/basis/
 
-**Q. How much will basis cost?**
+**Q. How much does basis cost?**
 
-A. The framework will be free. The deterministic replay component will not be. No public pricing yet. The general goal is for hobbyists, schools, and pre-funding companies to pay nothing. Any component we charge for will be useful for production robots and scaling codebases, and not vital if you're only at the prototyping stage. I'd love to release the replay component for free, also, but something has to pay for development.
+A. Pricing for commercial use is TBD. The general goal is for hobbyists, schools, and pre-funding companies to pay nothing. The deterministic replay component will not be free.
 
-**Q. What will basis's source license be?**
+**Q. What is basis's license?**
 
-A. The core framework's best candidate is MIT, but [FSL](https://fsl.software) is really cool. One of our goals it to make it easy to fork and improve. The deterministic replayer and other paid components will likely always be closed source (source available?).
+A. Basis is publically licensed under the Business Source License - see https://github.com/basis-robotics/basis/blob/main/LICENSE for details.
 
 **Q. Can you demo this to us?**
 
@@ -26,7 +26,7 @@ A. Yes - with a bit more work. If you're a basis user, we will work with you to 
 
 **Q. Can I contribute?**
 
-A. Not right now. Once we release source...maybe. The best place for external contributors will be for things like sensor drivers and other modules that can be pulled in.
+A. Soon! The best place for external contributors will be for things like sensor drivers and other modules that can be pulled in. If you're interested in contributing to the core, please let us know.
 
 **Q. Can I sponsor or fund Basis?**
 
