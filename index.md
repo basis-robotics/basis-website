@@ -2,7 +2,11 @@
 layout: page
 ---
 
-At Basis Robotics we're developing a testing and production focused robotics framework.
+Basis is a production-focused robotics development framework by Basis Robotics, built on a pub-sub architecture designed for deterministic testing. Unlike ROS and similar frameworks, Basis abstracts publishers and subscribers from the developer, using a model of `Inputs + Conditions (synchronizer) -> Handler (your code) -> Outputs`. You declare the messages and conditions that your code responds to, allowing the framework to automatically manage all underlying publishers, subscribers, and message routing as inputs and conditions trigger your code to process data and produce outputs.
+
+<a href="https://github.com/basis-robotics/basis" style="display: inline-block; padding: 5px 22px; font-size: 20px; background: #eee; text-decoration: none; color: #444; border-radius: 5px;">
+Get Basis <img src="assets/images/github-mark.svg" style="vertical-align: center; width: 30px; height: 30px; padding-top:11px;"/>
+</a>
 
 ### Why Choose Basis?
 
