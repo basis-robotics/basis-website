@@ -6,7 +6,7 @@ author: Kyle Franz
 
 I've spent the past few weeks working on a small robot to both be able to give demos with and exercise our code. This is a quick post on the hardware I bought, and what's worked/not worked.
 
-- [Part 01 - Hardware]({% link 2024-11-22-basis-robot-01-hardware.md %}) (You're here!)
+- [Part 01 - Hardware]({% post_url 2024-11-22-basis-robot-01-hardware %}) (You're here!)
 - Part 02 - Software
 - Part 03 - tf2 support and LiDAR 
 
@@ -15,12 +15,14 @@ I've spent the past few weeks working on a small robot to both be able to give d
 - Raspberry Pi 5 8GB
 - Raspberry Pi 5 Active Cooler
 - Raspberry Pi 5 SSD Hat
-- 1 TB NVME SSD
+- [Corsair MP600 CORE MICRO 1TB NVMe SSD](https://www.corsair.com/us/en/p/data-storage/cssd-f1000gbmp600mcr/mp600-micro-1tb-pcie-4-0-gen4-x4-nvme-m-2-2242-ssd-cssd-f1000gbmp600mcr)
 - [Mean Well RSP-75-7.5](https://www.bravoelectro.com/rsp-75-7-5.html?fbclid=IwY2xjawGt6KJleHRuA2FlbQIxMAABHZ49kYBXAzSuJn-doDtl-QpKzAqPjlhREPNqJcRPok3YdpcEtHOpsp-HCg_aem_lMoxt5n9ShF6aECgt2WBqA)
 - Various other electrical bits and pieces
 - SLAMTEC RPLIDAR (Future)
 
 ![The assembled robot]({{site.baseurl}}/assets/images/robot-hardware/assembled.jpg){: width="500" }
+
+All in all, I think I've spent a bit over $500 dollars on this project.
 
 ## FreeNove 4WD Smart Car Kit w/ Mecanum Wheels
 
@@ -31,6 +33,7 @@ The good:
  - Support was responsive after I burned out a servo
  - Mecanum wheels are really cool, and the algo to drive them is very simple
  - It didn't blow up when I hooked in power backwards
+ - It uses standard hardware with good driver support (standard raspberry pi camera, PCA9685 for servos/wheels)
 
 The bad:
  - The test code doesn't actually run on rpi-5 by default, you have to comment out a broken import (I should make a PR fixing this)
