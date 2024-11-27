@@ -10,6 +10,12 @@ I've spent the past few weeks working on a small robot to both be able to give d
 - [Part 02 - Software]({% post_url 2024-11-24-basis-robot-02-software %}) (You're here!)
 - Part 03 - tf2 support and LiDAR 
 
+After getting the hardware working, I moved on to the software. This required [a few small changes to the core framework](https://github.com/basis-robotics/basis/pull/64/files) (mostly fixing CMake technicalities), but nothing crazy.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/v8CYzripJm0?si=F6h22o1RYu7xqred" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+I can now move the robot around with an wireless controller! The left stick and bumpers control the wheels and the right stick controls the servos.
+
 # The Architecture:
 <pre class="mermaid">
 ---
@@ -60,6 +66,8 @@ handler_/freenove/rpi_freenove_mecanum_driver::Update --/motor_state--x /motor_s
 This is a pretty straightforward architecture, for now. We run joystick input, allowing it to control both the servos the camera is mounted on as well as the wheels. Later, we'll move the joystick input to the wheels to instead be an input to some sort of planning stick.
 
 This graph was generated with `basis launch --mermaid` - it does a dry run, outputting information about the launch in [mermaid](https://mermaid.js.org/). This is really useful - I can copy/paste directly into a blog post or github markdown document. The PR for this will be merged soon.
+
+# The code
 
 ## rpi_libcamera_driver
 
@@ -350,3 +358,7 @@ std::array<float, 4> XYTtoWheels(float x, float y, float theta) {
 }
 {% endraw %}{% endhighlight %}
 Mecanum wheel control is really simple. This function takes in the x/y joystick input and the sum of the triggers (theta), and outputs the power to each motor to satisfy those inputs.
+
+# Final thoughts
+
+This was pretty simple to do - helped of course by the availability of other libraries out there. I'm looking forward to getting LiDAR working - and then either SLAM (with an IMU?) or a simple planning+controls stack. 

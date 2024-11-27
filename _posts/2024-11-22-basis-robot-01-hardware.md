@@ -7,7 +7,7 @@ author: Kyle Franz
 I've spent the past few weeks working on a small robot to both be able to give demos with and exercise our code. This is a quick post on the hardware I bought, and what's worked/not worked.
 
 - [Part 01 - Hardware]({% post_url 2024-11-22-basis-robot-01-hardware %}) (You're here!)
-- Part 02 - Software
+- [Part 02 - Software]({% post_url 2024-11-24-basis-robot-02-software %})
 - Part 03 - tf2 support and LiDAR 
 
 # The hardware:
@@ -99,6 +99,6 @@ I haven't yet hooked the LiDAR in, just ran it off of USB on my PC. It looks goo
 
 ![lidar, soon]({{site.baseurl}}/assets/images/robot-hardware/lidar_scan.png){: width="500" }
 
-### Final thoughts
+# Final thoughts
 
 Hardware is both easier and tougher than I expected. As it turns out, [You can just do things](https://x.com/shaiyanhkhan/status/1754197898814689379). Any time I ran into an issue, it was mostly just a trip to Ace Hardware to fix it.
