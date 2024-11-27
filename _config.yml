@@ -56,3 +56,6 @@ plugins:
 kramdown:
   # parse markdown inside block-level HTML tag
   parse_block_html: true
+
+mermaid:
+  src: assets/mermaid.esm.min.mjs

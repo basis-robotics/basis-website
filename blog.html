@@ -5,13 +5,13 @@ title: Blog
 
 <div class="archive">
   {% for post in site.posts %} {% assign currYearDate = post.date | date: "%Y" %} {%
-  if currYearDate != date %}
+  if currYearDate != yearDate %}
   <h1 class="archive-year">{{ currYearDate }}</h1>
-  {% assign date = currYearDate %} {% endif %}
+  {% assign yearDate = currYearDate %} {% endif %}
   {% assign currMonthDate = post.date | date: "%B" %} {%
-    if currMonthDate != date %}
+    if currMonthDate != monthDate %}
   <h2 class="archive-month">{{ currMonthDate }}</h2>
-    {% assign date = currYearDate %} {% endif %}
+    {% assign monthDate = currMonthDate %} {% endif %}
   <div class="archive-item">
     <span class="post-date archive-date fs-4"
       >{{ post.date | date: "%B %d, %Y" }}</span
