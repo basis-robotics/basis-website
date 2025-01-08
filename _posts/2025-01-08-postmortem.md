@@ -63,7 +63,7 @@ This would have probably been a solid play to get VC money, if I were more disho
 
 # Conclusion
 
-I learned a hell of a lot out of this. It was even more stressful than I expected, and we never even had money change hands. I went from being super nervous at every pitch to being pretty relaxed and happy to talk about what we were building. Got a whole lot better at networking at conventions, gave my first talk in front of other companies at an event. I got to set up the bones of a company from scratch. I got to get the idea that's been knocking around my head for the past three or four years out of it and into code. I feel that's pretty lucky.
+I learned a hell of a lot out of this. It was even more stressful than I expected, and we never even had money change hands. I went from being super nervous at every pitch to being pretty relaxed and happy to talk about what we were building. Got a whole lot better at networking at conventions, gave my first talk in front of other companies at an event. I got to set up the bones of a company from scratch. I got to get the idea that's been knocking around my head for the past three or four years out of it and into code. I feel lucky that I had the opportunity for all of this and I'm not unhappy for trying.
 
 Given the opportunity, I'd do it again.
 
