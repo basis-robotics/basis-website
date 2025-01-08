@@ -69,6 +69,6 @@ Given the opportunity, I'd do it again.
 
 ## What's next?
 
-I'm now open to contract and full time work. You can see the entire corpus of what I've worked on over the past 7 months on our github (please keep in mind that normally I'd do a bit better with tests/docs!). 
+It sounds like Thomas is taking some time off - he deserves it. It's been a fun time, and I'm glad to have had him at my side.
 
-It sounds like Thomas is taking some time off
+I'm now open to contract and full time work. You can see the entire corpus of what I've worked on over the past 7 months on our github (please keep in mind that normally I'd do a bit better with tests/docs!). I'd love to stay in robotics but open to other areas as well. Please reach out at kyle@basisrobotics.tech
